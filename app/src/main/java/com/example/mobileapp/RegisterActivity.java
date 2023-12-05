@@ -55,7 +55,7 @@ public class RegisterActivity extends AppCompatActivity {
                                     FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
                                     Toast.makeText(RegisterActivity.this, "Account created", Toast.LENGTH_SHORT).show();
                                 } else {
-                                    Toast.makeText(RegisterActivity.this, "Authentification failed", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(RegisterActivity.this, "Authentication failed", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
