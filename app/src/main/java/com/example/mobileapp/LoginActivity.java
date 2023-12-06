@@ -56,7 +56,9 @@ public class LoginActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if(task.isSuccessful()){
                                     Toast.makeText(LoginActivity.this, "Logged in", Toast.LENGTH_SHORT).show();
-
+                                    Intent intent = new Intent(getApplicationContext(),NavBarActivity.class);
+                                    startActivity(intent);
+                                    finish();
                                 }
                                 else{
                                     Toast.makeText(LoginActivity.this, "Wrong credentials", Toast.LENGTH_SHORT).show();
