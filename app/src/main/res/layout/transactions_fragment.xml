@@ -6,13 +6,19 @@
     android:layout_height="match_parent"
     tools:context=".TransactionsFragment">
 
-    <include layout="@layout/toolbar_layout"/>
+    <include layout="@layout/accounts_toolbar_layout"/>
 
-    <TextView
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="First Fragment"
-        android:textSize="30sp"
-        android:layout_centerInParent="true"/>
+        android:backgroundTint="@color/white"
+        android:layout_centerInParent="true">
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
+
 
 </RelativeLayout>

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".BudgetFragment">
 
-    <include layout="@layout/toolbar_layout"/>
+    <include layout="@layout/accounts_toolbar_layout"/>
 
     <TextView
         android:layout_width="wrap_content"

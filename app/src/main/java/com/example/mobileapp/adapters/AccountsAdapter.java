@@ -1,9 +1,10 @@
 package com.example.mobileapp.adapters;
 
-import android.annotation.SuppressLint;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,8 +16,9 @@ import com.example.mobileapp.models.Account;
 import java.text.DecimalFormat;
 import java.util.List;
 
-public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.AccountViewHolder>{
-    private List<Account> accounts;
+public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.AccountViewHolder> {
+    private final List<Account> accounts;
+    private int selectedPosition = RecyclerView.NO_POSITION;
 
     public AccountsAdapter(List<Account> accounts) {
         this.accounts = accounts;
@@ -33,6 +35,23 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.Accoun
     public void onBindViewHolder(@NonNull AccountViewHolder holder, int position) {
         Account account = accounts.get(position);
         holder.bind(account);
+
+        holder.btnDelete.setOnClickListener(view -> {
+            selectedPosition = holder.getAdapterPosition();
+            removeAccount(position);
+        });
+    }
+
+    public void removeAccount(int position) {
+        accounts.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, accounts.size());
+
+        selectedPosition = RecyclerView.NO_POSITION;
+    }
+
+    public int getSelectedPosition() {
+        return selectedPosition;
     }
 
     @Override
@@ -41,13 +60,16 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.Accoun
     }
 
     public static class AccountViewHolder extends RecyclerView.ViewHolder {
-        private TextView accountNameTextView;
-        private TextView balanceTextView;
+        private final TextView accountNameTextView;
+        private final TextView balanceTextView;
+        private final ImageButton btnDelete;
+        private TextView typeTextView;
 
         public AccountViewHolder(@NonNull View itemView) {
             super(itemView);
             accountNameTextView = itemView.findViewById(R.id.accountNameTextView);
             balanceTextView = itemView.findViewById(R.id.balanceTextView);
+            btnDelete = itemView.findViewById(R.id.btn_delete);
         }
 
         public void bind(Account account) {
@@ -61,4 +83,5 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.Accoun
             return currencyFormatter.format(balance);
         }
     }
+
 }
