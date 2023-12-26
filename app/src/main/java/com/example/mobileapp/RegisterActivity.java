@@ -67,7 +67,7 @@ public class RegisterActivity extends AppCompatActivity {
                                     if (firebaseUser != null) {
                                         uid = firebaseUser.getUid();
                                     }
-                                    if(uid!=null) {
+                                    if (uid != null) {
                                         Toast.makeText(RegisterActivity.this, uid, Toast.LENGTH_SHORT).show();
                                         user.put("user_id", uid);
                                         db.collection("users")
@@ -86,8 +86,9 @@ public class RegisterActivity extends AppCompatActivity {
                                                         Toast.makeText(RegisterActivity.this, "UID failed", Toast.LENGTH_SHORT).show();
                                                     }
                                                 });
+                                    } else {
+                                        Toast.makeText(RegisterActivity.this, "UID is null", Toast.LENGTH_SHORT).show();
                                     }
-                                    else{Toast.makeText(RegisterActivity.this,"UID is null",Toast.LENGTH_SHORT);}
                                     Toast.makeText(RegisterActivity.this, "Account created", Toast.LENGTH_SHORT).show();
                                 } else {
                                     Toast.makeText(RegisterActivity.this, "Authentication failed", Toast.LENGTH_SHORT).show();

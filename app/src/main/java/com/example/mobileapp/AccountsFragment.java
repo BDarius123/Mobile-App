@@ -5,13 +5,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -20,9 +20,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mobileapp.adapters.AccountsAdapter;
 import com.example.mobileapp.models.Account;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AccountsFragment extends Fragment {
     private List<Account> mockAccounts = new ArrayList<>();
@@ -37,9 +47,11 @@ public class AccountsFragment extends Fragment {
 
         mockAccounts.clear();
 
-        mockAccounts.add(new Account("Account 1", 1000.0, "Checking"));
-        mockAccounts.add(new Account("Account 2", 2500.0, "Savings"));
-        mockAccounts.add(new Account("Account 3", 500.0, "Credit Card"));
+//        mockAccounts.add(new Account("1","Account 1", 1000.0, "Checking"));
+//        mockAccounts.add(new Account("2","Account 2", 2500.0, "Savings"));
+//        mockAccounts.add(new Account("3","Account 3", 500.0, "Credit Card"));
+
+        mockAccounts = getAccounts();
 
         recyclerView = rootView.findViewById(R.id.recycler_view_accounts);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -68,6 +80,42 @@ public class AccountsFragment extends Fragment {
 
 
         return rootView;
+    }
+
+    public List<Account> getAccounts() {
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        String currentUserUid = null;
+        if (firebaseUser != null)
+            currentUserUid = firebaseUser.getUid();
+
+        List<Account> accounts = new ArrayList<>();
+
+
+        CollectionReference bankAccountsCollection = FirebaseFirestore.getInstance().collection("bankAccounts");
+        Query userAccountsQuery;
+        if (currentUserUid != null) {
+            userAccountsQuery = bankAccountsCollection.whereEqualTo("user_id", currentUserUid);
+            userAccountsQuery.get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                            String accountId = document.getId();
+                            String accountType = document.getString("type");
+                            String accountName = document.getString("name");
+                            double accountBudget = document.getDouble("balance");
+
+                            accounts.add(new Account(accountId,accountName,accountBudget,accountType));
+                        }
+                        adapter.notifyDataSetChanged();
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getActivity(), "Couldn't load accounts", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
+        return accounts;
     }
 
     private void deleteConfirmationDialog(int position) {
@@ -100,18 +148,6 @@ public class AccountsFragment extends Fragment {
         EditText balanceEditText = view.findViewById(R.id.edit_text_balance);
 
         Spinner spinner = view.findViewById(R.id.spinner_account_type);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String accountType = adapterView.getItemAtPosition(i).toString();
-                Toast.makeText(requireContext(), "Account Type Selected : " + accountType, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
 
         ArrayList<String> accountTypes = new ArrayList<>();
         accountTypes.add("Checking");
@@ -125,12 +161,13 @@ public class AccountsFragment extends Fragment {
             // Retrieve data from the dialog
             String name = nameEditText.getText().toString();
             double balance = Double.parseDouble(balanceEditText.getText().toString());
-            String type = nameEditText.getText().toString();
+            String type = (String) spinner.getSelectedItem();
 
             // Add the new account to your data source
-            Account newAccount = new Account(name, balance, type);
+            Account newAccount = new Account(null,name, balance, type);
             mockAccounts.add(newAccount);
 
+            addAccount(newAccount);
             // Notify the adapter about the data change
             adapter.notifyDataSetChanged();
         });
@@ -139,6 +176,37 @@ public class AccountsFragment extends Fragment {
 
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    public void addAccount(Account account) {
+        Map<String, Object> addAccount = new HashMap<>();
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String uid = null;
+        if (firebaseUser != null) {
+            uid = firebaseUser.getUid();
+        }
+        if (uid != null) {
+            addAccount.put("user_id", uid);
+            addAccount.put("name", account.getName());
+            addAccount.put("balance", account.getBalance());
+            addAccount.put("type", account.getType());
+            db.collection("bankAccounts")
+                    .add(addAccount)
+                    .addOnSuccessListener(new OnSuccessListener() {
+                        @Override
+                        public void onSuccess(Object o) {
+                            Toast.makeText(getActivity(), "Account added", Toast.LENGTH_SHORT).show();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getActivity(), "Account add failed", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+        }
     }
 
 }
