@@ -57,27 +57,31 @@ public class AccountsFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         adapter = new AccountsAdapter(mockAccounts);
+        
         recyclerView.setAdapter(adapter);
 
         Toolbar toolbar = rootView.findViewById(R.id.toolbar);
         toolbar.setTitle("Accounts");
         toolbar.setTitleTextColor(ContextCompat.getColor(requireContext(), R.color.white));
 
-        ImageButton deleteAccountButton = rootView.findViewById(R.id.btn_delete);
-
-//        deleteAccountButton.setOnClickListener(view -> {
-//            int selectedPosition = adapter.getSelectedPosition();
-//            if (selectedPosition != RecyclerView.NO_POSITION) {
-//                deleteConfirmationDialog(selectedPosition);
-//            } else {
-//                Toast.makeText(requireContext(), "No account selected", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
-
         ImageButton addAccountButton = rootView.findViewById(R.id.fab_add);
         addAccountButton.setOnClickListener(view -> showAddAccountDialog());
 
+
+        ImageButton deleteAccountButton = rootView.findViewById(R.id.btn_delete);
+        try {
+            deleteAccountButton.setOnClickListener(view -> {
+                int selectedPosition = adapter.getSelectedPosition();
+                if (selectedPosition != RecyclerView.NO_POSITION) {
+                    deleteConfirmationDialog(selectedPosition);
+                } else {
+                    Toast.makeText(requireContext(), "No account selected", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        catch (NullPointerException e){
+            e.printStackTrace();
+        }
 
         return rootView;
     }
@@ -95,7 +99,7 @@ public class AccountsFragment extends Fragment {
         CollectionReference bankAccountsCollection = FirebaseFirestore.getInstance().collection("bankAccounts");
         Query userAccountsQuery;
         if (currentUserUid != null) {
-            userAccountsQuery = bankAccountsCollection.whereEqualTo("user_id", currentUserUid);
+            userAccountsQuery = bankAccountsCollection.whereEqualTo("user_id", currentUserUid).orderBy("balance");
             userAccountsQuery.get()
                     .addOnSuccessListener(queryDocumentSnapshots -> {
                         for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
@@ -124,7 +128,7 @@ public class AccountsFragment extends Fragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("Confirm Deletion");
         builder.setMessage("Are you sure you want to delete the selected accounts?");
-        builder.setPositiveButton("Yes", (dialog, which) -> deleteSelectedAccount(selectedPosition));
+        builder.setPositiveButton("Yes", (dialog, which) -> deleteSelectedAccount(position));
         builder.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
 
         AlertDialog dialog = builder.create();
