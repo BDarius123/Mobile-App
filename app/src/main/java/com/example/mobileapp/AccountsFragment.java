@@ -57,7 +57,7 @@ public class AccountsFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         adapter = new AccountsAdapter(mockAccounts);
-        
+
         recyclerView.setAdapter(adapter);
 
         Toolbar toolbar = rootView.findViewById(R.id.toolbar);
@@ -68,20 +68,20 @@ public class AccountsFragment extends Fragment {
         addAccountButton.setOnClickListener(view -> showAddAccountDialog());
 
 
-        ImageButton deleteAccountButton = rootView.findViewById(R.id.btn_delete);
-        try {
-            deleteAccountButton.setOnClickListener(view -> {
-                int selectedPosition = adapter.getSelectedPosition();
-                if (selectedPosition != RecyclerView.NO_POSITION) {
-                    deleteConfirmationDialog(selectedPosition);
-                } else {
-                    Toast.makeText(requireContext(), "No account selected", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-        catch (NullPointerException e){
-            e.printStackTrace();
-        }
+//        ImageButton deleteAccountButton = rootView.findViewById(R.id.btn_delete);
+//        try {
+//            deleteAccountButton.setOnClickListener(view -> {
+//                int selectedPosition = adapter.getSelectedPosition();
+//                if (selectedPosition != RecyclerView.NO_POSITION) {
+//                    deleteConfirmationDialog(selectedPosition);
+//                } else {
+//                    Toast.makeText(requireContext(), "No account selected", Toast.LENGTH_SHORT).show();
+//                }
+//            });
+//        }
+//        catch (NullPointerException e){
+//            e.printStackTrace();
+//        }
 
         return rootView;
     }
@@ -108,7 +108,7 @@ public class AccountsFragment extends Fragment {
                             String accountName = document.getString("name");
                             double accountBudget = document.getDouble("balance");
 
-                            accounts.add(new Account(accountId,accountName,accountBudget,accountType));
+                            accounts.add(new Account(accountId, accountName, accountBudget, accountType));
                         }
                         adapter.notifyDataSetChanged();
                     })
@@ -137,7 +137,7 @@ public class AccountsFragment extends Fragment {
 
     private void deleteSelectedAccount(int position) {
         if (adapter != null) {
-            adapter.removeAccount(position);
+            adapter.removeAccount(position, "");
         }
     }
 
@@ -168,7 +168,7 @@ public class AccountsFragment extends Fragment {
             String type = (String) spinner.getSelectedItem();
 
             // Add the new account to your data source
-            Account newAccount = new Account(null,name, balance, type);
+            Account newAccount = new Account(null, name, balance, type);
             mockAccounts.add(newAccount);
 
             addAccount(newAccount);
