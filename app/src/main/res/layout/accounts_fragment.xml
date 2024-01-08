@@ -9,6 +9,7 @@
 
     <include layout="@layout/accounts_toolbar_layout"/>
 
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_accounts"
         android:layout_width="match_parent"
@@ -16,22 +17,21 @@
         android:layout_below="@id/toolbar"
         android:layout_marginTop="8dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
         tools:listitem="@layout/items_accounts" />
-
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
         android:layout_alignParentBottom="true"
-        android:backgroundTint="@color/secondary"
+        android:layout_centerInParent="true"
         android:layout_marginBottom="10dp"
+        android:backgroundTint="@color/secondary"
         android:contentDescription="Add"
-        app:srcCompat="@drawable/ic_add"/>
+        app:srcCompat="@drawable/ic_add" />
 
 </RelativeLayout>

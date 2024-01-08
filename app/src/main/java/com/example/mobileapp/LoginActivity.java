@@ -12,6 +12,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Firebase;
 import com.google.firebase.auth.AuthResult;
@@ -26,7 +28,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onStart();
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         if(firebaseUser!=null){
-
+            Intent intent = new Intent(getApplicationContext(),NavBarActivity.class);
         }
     }
     @Override
@@ -39,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
         final EditText password = findViewById(R.id.password);
         final Button btn = findViewById(R.id.loginButton);
         final TextView register = findViewById(R.id.RegisterLink);
-
+        final TextView reset = findViewById(R.id.resetPwd);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -51,18 +53,19 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
                 firebaseAuth.signInWithEmailAndPassword(emailText,passwordText)
-                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                             @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if(task.isSuccessful()){
-                                    Toast.makeText(LoginActivity.this, "Logged in", Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(getApplicationContext(),NavBarActivity.class);
-                                    startActivity(intent);
-                                    finish();
-                                }
-                                else{
-                                    Toast.makeText(LoginActivity.this, "Wrong credentials", Toast.LENGTH_SHORT).show();
-                                }
+                            public void onSuccess(AuthResult authResult) {
+                                Toast.makeText(LoginActivity.this, "Logged in", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(getApplicationContext(),NavBarActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(LoginActivity.this,"Wrong credentials",Toast.LENGTH_SHORT).show();
                             }
                         });
 
@@ -74,6 +77,14 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(),RegisterActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+        reset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),ResetPassword.class);
                 startActivity(intent);
                 finish();
             }
