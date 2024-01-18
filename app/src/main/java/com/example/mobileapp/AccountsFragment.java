@@ -1,6 +1,7 @@
 package com.example.mobileapp;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -85,6 +86,30 @@ public class AccountsFragment extends Fragment {
 
         return rootView;
     }
+    private void deleteConfirmationDialog(int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Confirm Deletion");
+        builder.setMessage("Are you sure you want to delete the selected account?");
+
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Call the method to delete the selected account
+                deleteSelectedAccount(position);
+            }
+        });
+
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
 
     public List<Account> getAccounts() {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
@@ -122,21 +147,9 @@ public class AccountsFragment extends Fragment {
         return accounts;
     }
 
-    private void deleteConfirmationDialog(int position) {
-        int selectedPosition = adapter.getSelectedPosition();
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("Confirm Deletion");
-        builder.setMessage("Are you sure you want to delete the selected accounts?");
-        builder.setPositiveButton("Yes", (dialog, which) -> deleteSelectedAccount(position));
-        builder.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
-
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
-
     private void deleteSelectedAccount(int position) {
         if (adapter != null) {
+            // Call the method to remove the account from your data source
             adapter.removeAccount(position, "");
         }
     }
