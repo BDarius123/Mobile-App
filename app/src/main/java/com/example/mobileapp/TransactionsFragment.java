@@ -62,18 +62,6 @@ public class TransactionsFragment extends Fragment {
 
         // Rest of your code for handling button click, adding transactions, etc.
 
-        String[] typeOfCategory = {"Groceries", "Entertainment", "Transportation", "Travel Expenses", "Utilities", "Other", "Going out"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(requireContext(), R.layout.drop_down_item, typeOfCategory);
-        AutoCompleteTextView editTextFilledExposedDropdown = rootView.findViewById(R.id.filled_exposed_dropdown);
-        editTextFilledExposedDropdown.setAdapter(adapter);
-
-        editTextFilledExposedDropdown.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editTextFilledExposedDropdown.showDropDown();
-                Toast.makeText(requireContext(), editTextFilledExposedDropdown.getText().toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
         return rootView;
     }
     private List<String> getAccountsFromFragment() {

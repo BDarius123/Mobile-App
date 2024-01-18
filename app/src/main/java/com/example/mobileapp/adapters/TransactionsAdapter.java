@@ -52,16 +52,13 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
         return transactionList.size();
     }
 
-
     static class TransactionViewHolder extends RecyclerView.ViewHolder {
         private final AutoCompleteTextView autoCompleteCategory;
         private final AutoCompleteTextView autoCompleteAccount;
         private final TextInputLayout textInputLayoutDate;
         private final TextInputEditText editTextDate;
-
         private final TextInputLayout textInputLayoutMemo;
         private final TextInputEditText editTextMemo;
-
         private final MaterialButton btnAddTransaction;
 
         public TransactionViewHolder(@NonNull View itemView) {
@@ -70,10 +67,8 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
             autoCompleteAccount = itemView.findViewById(R.id.filled_exposed_dropdown2);
             textInputLayoutDate = itemView.findViewById(R.id.textInputLayoutDate);
             editTextDate = itemView.findViewById(R.id.editTextDate);
-
             textInputLayoutMemo = itemView.findViewById(R.id.textInputLayoutMemo);
             editTextMemo = itemView.findViewById(R.id.editTextMemo);
-
             btnAddTransaction = itemView.findViewById(R.id.btnAddTransaction);
 
         }

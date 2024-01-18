@@ -58,7 +58,7 @@ public class AccountsFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         adapter = new AccountsAdapter(mockAccounts);
-
+        
         recyclerView.setAdapter(adapter);
 
         Toolbar toolbar = rootView.findViewById(R.id.toolbar);
@@ -86,30 +86,6 @@ public class AccountsFragment extends Fragment {
 
         return rootView;
     }
-    private void deleteConfirmationDialog(int position) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("Confirm Deletion");
-        builder.setMessage("Are you sure you want to delete the selected account?");
-
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // Call the method to delete the selected account
-                deleteSelectedAccount(position);
-            }
-        });
-
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
-
 
     public List<Account> getAccounts() {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
@@ -133,7 +109,7 @@ public class AccountsFragment extends Fragment {
                             String accountName = document.getString("name");
                             double accountBudget = document.getDouble("balance");
 
-                            accounts.add(new Account(accountId, accountName, accountBudget, accountType));
+                            accounts.add(new Account(accountId,accountName,accountBudget,accountType));
                         }
                         adapter.notifyDataSetChanged();
                     })
@@ -147,10 +123,22 @@ public class AccountsFragment extends Fragment {
         return accounts;
     }
 
+    private void deleteConfirmationDialog(int position) {
+        int selectedPosition = adapter.getSelectedPosition();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Confirm Deletion");
+        builder.setMessage("Are you sure you want to delete the selected accounts?");
+        builder.setPositiveButton("Yes", (dialog, which) -> deleteSelectedAccount(position));
+        builder.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
     private void deleteSelectedAccount(int position) {
         if (adapter != null) {
-            // Call the method to remove the account from your data source
-            adapter.removeAccount(position, "");
+            adapter.removeAccount(position);
         }
     }
 
@@ -181,7 +169,7 @@ public class AccountsFragment extends Fragment {
             String type = (String) spinner.getSelectedItem();
 
             // Add the new account to your data source
-            Account newAccount = new Account(null, name, balance, type);
+            Account newAccount = new Account(null,name, balance, type);
             mockAccounts.add(newAccount);
 
             addAccount(newAccount);
