@@ -8,11 +8,22 @@ import java.util.Locale;
 public class Transaction implements Serializable {
     private String category;
     private String account;
-    private Date date;
+    private String date;
     private String memo;
     private double amount;
 
-    public Transaction(String category, String account, Date date, double amount, String memo) {
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "category='" + category + '\'' +
+                ", account='" + account + '\'' +
+                ", date=" + date +
+                ", memo='" + memo + '\'' +
+                ", amount=" + amount +
+                '}';
+    }
+
+    public Transaction(String category, String account, String date, double amount, String memo) {
         this.category = category;
         this.account = account;
         this.date = date;
@@ -36,11 +47,11 @@ public class Transaction implements Serializable {
         this.account = account;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

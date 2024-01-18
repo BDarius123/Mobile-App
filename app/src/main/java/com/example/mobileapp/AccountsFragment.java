@@ -1,6 +1,7 @@
 package com.example.mobileapp;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,11 +48,9 @@ public class AccountsFragment extends Fragment {
 
         mockAccounts.clear();
 
-//        mockAccounts.add(new Account("1","Account 1", 1000.0, "Checking"));
-//        mockAccounts.add(new Account("2","Account 2", 2500.0, "Savings"));
-//        mockAccounts.add(new Account("3","Account 3", 500.0, "Credit Card"));
-
-        mockAccounts = getAccounts();
+        mockAccounts.add(new Account("1", "Account 1", 1000.0, "Checking"));
+        mockAccounts.add(new Account("2", "Account 2", 2500.0, "Savings"));
+        mockAccounts.add(new Account("3", "Account 3", 500.0, "Credit Card"));
 
         recyclerView = rootView.findViewById(R.id.recycler_view_accounts);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -68,22 +67,57 @@ public class AccountsFragment extends Fragment {
         addAccountButton.setOnClickListener(view -> showAddAccountDialog());
 
 
-//        ImageButton deleteAccountButton = rootView.findViewById(R.id.btn_delete);
-//        try {
-//            deleteAccountButton.setOnClickListener(view -> {
-//                int selectedPosition = adapter.getSelectedPosition();
-//                if (selectedPosition != RecyclerView.NO_POSITION) {
-//                    deleteConfirmationDialog(selectedPosition);
-//                } else {
-//                    Toast.makeText(requireContext(), "No account selected", Toast.LENGTH_SHORT).show();
-//                }
-//            });
-//        }
-//        catch (NullPointerException e){
-//            e.printStackTrace();
-//        }
+        ImageButton deleteAccountButton = rootView.findViewById(R.id.btn_delete);
+        try {
+            deleteAccountButton.setOnClickListener(view -> {
+                int selectedPosition = adapter.getSelectedPosition();
+                if (selectedPosition != RecyclerView.NO_POSITION) {
+                    deleteConfirmationDialog(selectedPosition);
+                } else {
+                    Toast.makeText(requireContext(), "No account selected", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        catch (NullPointerException e){
+            e.printStackTrace();
+        }
 
         return rootView;
+    }
+    private void deleteConfirmationDialog(int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Confirm Deletion");
+        builder.setMessage("Are you sure you want to delete the selected account?");
+
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Call the method to delete the selected account
+                deleteSelectedAccount(position);
+            }
+        });
+
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+    public List<String> getAccountNames() {
+        // Fetch the list of accounts
+        List<Account> accounts = getAccounts();
+
+        // Extract account names from the list
+        List<String> accountNames = new ArrayList<>();
+        for (Account account : accounts) {
+            accountNames.add(account.getName());
+        }
+
+        return accountNames;
     }
 
     public List<Account> getAccounts() {
@@ -122,21 +156,9 @@ public class AccountsFragment extends Fragment {
         return accounts;
     }
 
-    private void deleteConfirmationDialog(int position) {
-        int selectedPosition = adapter.getSelectedPosition();
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("Confirm Deletion");
-        builder.setMessage("Are you sure you want to delete the selected accounts?");
-        builder.setPositiveButton("Yes", (dialog, which) -> deleteSelectedAccount(position));
-        builder.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
-
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
-
     private void deleteSelectedAccount(int position) {
         if (adapter != null) {
+            // Call the method to remove the account from your data source
             adapter.removeAccount(position, "");
         }
     }
