@@ -56,7 +56,6 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
         private final AutoCompleteTextView autoCompleteCategory;
         private final AutoCompleteTextView autoCompleteAccount;
         private final TextInputLayout textInputLayoutDate;
-        private final TextInputEditText editTextDate;
         private final TextInputLayout textInputLayoutMemo;
         private final TextInputEditText editTextMemo;
         private final MaterialButton btnAddTransaction;
@@ -66,7 +65,7 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
             autoCompleteCategory = itemView.findViewById(R.id.filled_exposed_dropdown);
             autoCompleteAccount = itemView.findViewById(R.id.filled_exposed_dropdown2);
             textInputLayoutDate = itemView.findViewById(R.id.textInputLayoutDate);
-            editTextDate = itemView.findViewById(R.id.editTextDate);
+
             textInputLayoutMemo = itemView.findViewById(R.id.textInputLayoutMemo);
             editTextMemo = itemView.findViewById(R.id.editTextMemo);
             btnAddTransaction = itemView.findViewById(R.id.btnAddTransaction);
@@ -76,7 +75,7 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
         public void bind(Transaction transaction) {
             autoCompleteCategory.setText(transaction.getCategory(), false);
             autoCompleteAccount.setText(transaction.getAccount(), false);
-            editTextDate.setText(transaction.getDateAsString());
+
             editTextMemo.setText(transaction.getMemo());
 
             if (transaction.getMemo() != null && !transaction.getMemo().isEmpty()) {

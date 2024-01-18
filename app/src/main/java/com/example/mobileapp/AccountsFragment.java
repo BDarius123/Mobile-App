@@ -138,7 +138,8 @@ public class AccountsFragment extends Fragment {
 
     private void deleteSelectedAccount(int position) {
         if (adapter != null) {
-            adapter.removeAccount(position);
+            adapter.removeAccount(position,adapter.getNameAtPosition(position));
+
         }
     }
 

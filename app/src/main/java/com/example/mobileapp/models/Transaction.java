@@ -2,15 +2,26 @@ package com.example.mobileapp.models;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Locale;
 
 public class Transaction implements Serializable {
+    private String id;
     private String category;
     private String account;
     private String date;
     private String memo;
     private double amount;
+
+    public Transaction(String id, String category, String account, String date, String memo, double amount) {
+        this.id = id;
+        this.category = category;
+        this.account = account;
+        this.date = date;
+        this.memo = memo;
+        this.amount = amount;
+    }
 
     @Override
     public String toString() {
@@ -23,13 +34,7 @@ public class Transaction implements Serializable {
                 '}';
     }
 
-    public Transaction(String category, String account, String date, double amount, String memo) {
-        this.category = category;
-        this.account = account;
-        this.date = date;
-        this.amount = amount;
-        this.memo = memo;
-    }
+
 
     public String getCategory() {
         return category;
@@ -74,5 +79,13 @@ public class Transaction implements Serializable {
     public String getDateAsString() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         return dateFormat.format(date);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
