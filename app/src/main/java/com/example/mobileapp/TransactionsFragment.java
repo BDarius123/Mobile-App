@@ -1,10 +1,16 @@
 package com.example.mobileapp;
 
+import android.content.Context;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.Toast;
 
 
 import androidx.appcompat.widget.Toolbar;
@@ -35,10 +41,6 @@ public class TransactionsFragment extends Fragment {
         toolbar.setTitleTextColor(ContextCompat.getColor(requireContext(), R.color.white));
 
         transactions = new ArrayList<>();
-        //adapter = new TransactionsAdapter(transactions);
-        //recyclerView.setAdapter(adapter);
-
-        // Handle adding a new transaction (this is just a basic example)
 
         Button btnAddTransaction = rootView.findViewById(R.id.btnAddTransaction);
         btnAddTransaction.setOnClickListener(new View.OnClickListener() {
@@ -48,7 +50,7 @@ public class TransactionsFragment extends Fragment {
                 String category = "Travel Expenses"; // Example category
                 String account = "Savings Account"; // Example account
                 double amount = 50.0; // Example amount
-                Date date = new Date(); // Example date
+                String date = "Date : ";// Example date
                 String memo = "This is an optional memo"; // Example memo
 
                 // Create a new transaction
@@ -59,9 +61,22 @@ public class TransactionsFragment extends Fragment {
 
                 // Notify the adapter that the data has changed
                 adapter.notifyDataSetChanged();
+
             }
         });
 
+        String[] typeOfCategory = {"Groceries", "Entertainment", "Transportation", "Travel Expenses", "Utilities", "Other", "Going out"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(requireContext(), R.layout.drop_down_item, typeOfCategory);
+        AutoCompleteTextView editTextFilledExposedDropdown = rootView.findViewById(R.id.filled_exposed_dropdown);
+        editTextFilledExposedDropdown.setAdapter(adapter);
+
+        editTextFilledExposedDropdown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editTextFilledExposedDropdown.showDropDown();
+                Toast.makeText(requireContext(), editTextFilledExposedDropdown.getText().toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
         return rootView;
     }
 }

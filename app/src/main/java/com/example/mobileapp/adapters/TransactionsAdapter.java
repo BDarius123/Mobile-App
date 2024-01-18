@@ -37,8 +37,8 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
 
 
     static class TransactionViewHolder extends RecyclerView.ViewHolder {
-        private final TextInputLayout textInputLayoutCategory;
-        private final TextInputEditText editTextCategory;
+//        private final TextInputLayout textInputLayoutCategory;
+//        private final TextInputEditText editTextCategory;
 
         private final TextInputLayout textInputLayoutAccount;
         private final TextInputEditText editTextAccount;
@@ -53,8 +53,8 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
 
         public TransactionViewHolder(@NonNull View itemView) {
             super(itemView);
-            textInputLayoutCategory = itemView.findViewById(R.id.textInputLayoutCategory);
-            editTextCategory = itemView.findViewById(R.id.editTextCategory);
+//            textInputLayoutCategory = itemView.findViewById(R.id.textInputLayoutCategory);
+//            editTextCategory = itemView.findViewById(R.id.editTextCategory);
 
             textInputLayoutAccount = itemView.findViewById(R.id.textInputLayoutAccount);
             editTextAccount = itemView.findViewById(R.id.editTextAccount);
@@ -70,7 +70,7 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
 
         public void bind(Transaction transaction) {
 
-            editTextCategory.setText(transaction.getCategory());
+            //editTextCategory.setText(transaction.getCategory());
             editTextAccount.setText(transaction.getAccount());
             editTextDate.setText(transaction.getDateAsString());
             editTextMemo.setText(transaction.getMemo());

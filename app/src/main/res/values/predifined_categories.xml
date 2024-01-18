@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="predefined_categories">
+        <item>Transportation</item>
+        <item>Groceries</item>
+        <item>Utilities</item>
+        <item>Entertainment</item>
+        <item>Going out</item>
+        <item>Others</item>
+    </string-array>
+</resources>
