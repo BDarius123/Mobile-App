@@ -3,6 +3,8 @@ package com.example.mobileapp.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -11,19 +13,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mobileapp.R;
 import com.example.mobileapp.models.Transaction;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetViewHolder> {
+public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetViewHolder> implements Filterable  {
     private List<Transaction> budgetItemList;
+    private List<Transaction> budgetItemListFull;
 
-    // Constructor to initialize the dataset
     public BudgetAdapter(List<Transaction> budgetItemList) {
         this.budgetItemList = budgetItemList;
     }
 
-    // ViewHolder class to represent each item's view
     public static class BudgetViewHolder extends RecyclerView.ViewHolder {
-        // Define your views here (example: TextViews)
         TextView categoryTextView;
         TextView accountTextView;
         TextView dateTextView;
@@ -40,6 +41,7 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
             memoTextView = itemView.findViewById(R.id.memoTextView);
             amountTextView = itemView.findViewById(R.id.memoAmountView);
         }
+
 
     }
 
@@ -63,6 +65,8 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
         holder.dateTextView.setText("Date: " + currentItem.getDate());
         holder.memoTextView.setText("Memo: " + currentItem.getMemo());
         holder.amountTextView.setText("Amount: " + currentItem.getAmount());
+
+
     }
 
     @Override
@@ -74,5 +78,46 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
     public void updateData(List<Transaction> transactions) {
         this.budgetItemList = transactions;
         notifyDataSetChanged();
+    }
+
+    @NonNull
+    @Override
+    public Filter getFilter() {
+        return budgetFilter;
+    }
+
+    private final Filter budgetFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<Transaction> filteredList = new ArrayList<>();
+
+            if (constraint == null || constraint.length() == 0) {
+                filteredList.addAll(budgetItemListFull);
+            } else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+
+                for (Transaction transaction : budgetItemListFull) {
+                    if (transaction.getCategory().toLowerCase().contains(filterPattern)) {
+                        filteredList.add(transaction);
+                    }
+                }
+            }
+
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            budgetItemList.clear();
+            budgetItemList.addAll((List) results.values);
+            notifyDataSetChanged();
+        }
+    };
+
+    public void setOriginalList(List<Transaction> originalList) {
+        this.budgetItemListFull = new ArrayList<>(originalList);
     }
 }

@@ -1,7 +1,10 @@
 package com.example.mobileapp.adapters;
 
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,64 +17,65 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Locale;
 
 public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapter.TransactionViewHolder> {
 
+    private List<Transaction> transactionList;
+    private ArrayAdapter<String> accountAdapter;
+    private ArrayAdapter<String> categoryAdapter;
+
+    public TransactionsAdapter(List<Transaction> transactionList, ArrayAdapter<String> accountAdapter, ArrayAdapter<String> categoryAdapter) {
+        this.transactionList = transactionList;
+        this.accountAdapter = accountAdapter;
+        this.categoryAdapter = categoryAdapter;
+    }
 
     @NonNull
     @Override
-    public TransactionsAdapter.TransactionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return null;
+    public TransactionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // Inflate your item layout and create a new ViewHolder
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.transactions_fragment, parent, false);
+        return new TransactionViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull TransactionsAdapter.TransactionViewHolder holder, int position) {
-
+    public void onBindViewHolder(@NonNull TransactionViewHolder holder, int position) {
+        // Bind data to views based on the item position
+        Transaction currentItem = transactionList.get(position);
+        holder.bind(currentItem);
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return transactionList.size();
     }
 
-
     static class TransactionViewHolder extends RecyclerView.ViewHolder {
-//        private final TextInputLayout textInputLayoutCategory;
-//        private final TextInputEditText editTextCategory;
-
-        private final TextInputLayout textInputLayoutAccount;
-        private final TextInputEditText editTextAccount;
-
+        private final AutoCompleteTextView autoCompleteCategory;
+        private final AutoCompleteTextView autoCompleteAccount;
         private final TextInputLayout textInputLayoutDate;
         private final TextInputEditText editTextDate;
-
         private final TextInputLayout textInputLayoutMemo;
         private final TextInputEditText editTextMemo;
-
         private final MaterialButton btnAddTransaction;
 
         public TransactionViewHolder(@NonNull View itemView) {
             super(itemView);
-//            textInputLayoutCategory = itemView.findViewById(R.id.textInputLayoutCategory);
-//            editTextCategory = itemView.findViewById(R.id.editTextCategory);
-
-            textInputLayoutAccount = itemView.findViewById(R.id.textInputLayoutAccount);
-            editTextAccount = itemView.findViewById(R.id.editTextAccount);
-
+            autoCompleteCategory = itemView.findViewById(R.id.filled_exposed_dropdown);
+            autoCompleteAccount = itemView.findViewById(R.id.filled_exposed_dropdown2);
             textInputLayoutDate = itemView.findViewById(R.id.textInputLayoutDate);
             editTextDate = itemView.findViewById(R.id.editTextDate);
-
             textInputLayoutMemo = itemView.findViewById(R.id.textInputLayoutMemo);
             editTextMemo = itemView.findViewById(R.id.editTextMemo);
-
             btnAddTransaction = itemView.findViewById(R.id.btnAddTransaction);
+
         }
 
         public void bind(Transaction transaction) {
-
-            //editTextCategory.setText(transaction.getCategory());
-            editTextAccount.setText(transaction.getAccount());
+            autoCompleteCategory.setText(transaction.getCategory(), false);
+            autoCompleteAccount.setText(transaction.getAccount(), false);
             editTextDate.setText(transaction.getDateAsString());
             editTextMemo.setText(transaction.getMemo());
 

@@ -48,11 +48,9 @@ public class AccountsFragment extends Fragment {
 
         mockAccounts.clear();
 
-//        mockAccounts.add(new Account("1","Account 1", 1000.0, "Checking"));
-//        mockAccounts.add(new Account("2","Account 2", 2500.0, "Savings"));
-//        mockAccounts.add(new Account("3","Account 3", 500.0, "Credit Card"));
-
-        mockAccounts = getAccounts();
+        mockAccounts.add(new Account("1", "Account 1", 1000.0, "Checking"));
+        mockAccounts.add(new Account("2", "Account 2", 2500.0, "Savings"));
+        mockAccounts.add(new Account("3", "Account 3", 500.0, "Credit Card"));
 
         recyclerView = rootView.findViewById(R.id.recycler_view_accounts);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -109,7 +107,18 @@ public class AccountsFragment extends Fragment {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+    public List<String> getAccountNames() {
+        // Fetch the list of accounts
+        List<Account> accounts = getAccounts();
 
+        // Extract account names from the list
+        List<String> accountNames = new ArrayList<>();
+        for (Account account : accounts) {
+            accountNames.add(account.getName());
+        }
+
+        return accountNames;
+    }
 
     public List<Account> getAccounts() {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();

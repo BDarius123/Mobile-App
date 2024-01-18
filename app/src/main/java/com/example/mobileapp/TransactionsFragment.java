@@ -16,18 +16,23 @@ import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mobileapp.adapters.TransactionsAdapter;
 import com.example.mobileapp.models.Transaction;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 public class TransactionsFragment extends Fragment {
 
     private List<Transaction> transactions;
-    private TransactionsAdapter adapter;
+    private ArrayAdapter<String> categoryAdapter;
+    private ArrayAdapter<String> accountAdapter;
+
 
     @Override
     public View onCreateView(
@@ -42,41 +47,25 @@ public class TransactionsFragment extends Fragment {
 
         transactions = new ArrayList<>();
 
-        Button btnAddTransaction = rootView.findViewById(R.id.btnAddTransaction);
-        btnAddTransaction.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Get user input (replace with your UI elements)
-                String category = "Travel Expenses"; // Example category
-                String account = "Savings Account"; // Example account
-                double amount = 50.0; // Example amount
-                String date = "Date : ";// Example date
-                String memo = "This is an optional memo"; // Example memo
+        // Initialize your adapters (assuming you have lists of categories and accounts)
+        String[] categories = {"Groceries", "Entertainment", "Transportation", "Travel Expenses", "Utilities", "Other", "Going out"};
+        List<String> accounts = getAccountsFromFragment(); // Implement this method
 
-                // Create a new transaction
-                Transaction newTransaction = new Transaction(category, account, date, amount, memo);
+        categoryAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, categories);
+        accountAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, accounts);
 
-                // Add the transaction to the list
-                transactions.add(newTransaction);
+        AutoCompleteTextView autoCompleteCategory = rootView.findViewById(R.id.filled_exposed_dropdown);
+        autoCompleteCategory.setAdapter(categoryAdapter);
 
-                // Notify the adapter that the data has changed
-                adapter.notifyDataSetChanged();
+        AutoCompleteTextView autoCompleteAccounts = rootView.findViewById(R.id.filled_exposed_dropdown2);
+        autoCompleteAccounts.setAdapter(accountAdapter);
 
-            }
-        });
+        // Rest of your code for handling button click, adding transactions, etc.
 
-        String[] typeOfCategory = {"Groceries", "Entertainment", "Transportation", "Travel Expenses", "Utilities", "Other", "Going out"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(requireContext(), R.layout.drop_down_item, typeOfCategory);
-        AutoCompleteTextView editTextFilledExposedDropdown = rootView.findViewById(R.id.filled_exposed_dropdown);
-        editTextFilledExposedDropdown.setAdapter(adapter);
-
-        editTextFilledExposedDropdown.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editTextFilledExposedDropdown.showDropDown();
-                Toast.makeText(requireContext(), editTextFilledExposedDropdown.getText().toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
         return rootView;
+    }
+    private List<String> getAccountsFromFragment() {
+        // Add logic to retrieve accounts from AccountsFragment
+        return Arrays.asList("Account1", "Account2", "Account3");
     }
 }
