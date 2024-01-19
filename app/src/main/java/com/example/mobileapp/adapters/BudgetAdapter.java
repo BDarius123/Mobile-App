@@ -34,7 +34,6 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
         public BudgetViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            // Initialize your views
             categoryTextView = itemView.findViewById(R.id.categoryTextView);
             accountTextView = itemView.findViewById(R.id.accountTextView);
             dateTextView = itemView.findViewById(R.id.memoDateView);
@@ -48,7 +47,6 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
     @NonNull
     @Override
     public BudgetViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Inflate the item layout and create a new ViewHolder
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.items_transactions, parent, false);
 
@@ -57,7 +55,7 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
 
     @Override
     public void onBindViewHolder(@NonNull BudgetViewHolder holder, int position) {
-        // Bind data to views based on the item position
+
         Transaction currentItem = budgetItemList.get(position);
 
         holder.categoryTextView.setText("Category: " + currentItem.getCategory());
@@ -71,7 +69,6 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
 
     @Override
     public int getItemCount() {
-        // Return the size of your dataset (number of items)
         return budgetItemList.size();
     }
 

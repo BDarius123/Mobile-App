@@ -68,22 +68,6 @@ public class AccountsFragment extends Fragment {
         ImageButton addAccountButton = rootView.findViewById(R.id.fab_add);
         addAccountButton.setOnClickListener(view -> showAddAccountDialog());
 
-
-//        ImageButton deleteAccountButton = rootView.findViewById(R.id.btn_delete);
-//        try {
-//            deleteAccountButton.setOnClickListener(view -> {
-//                int selectedPosition = adapter.getSelectedPosition();
-//                if (selectedPosition != RecyclerView.NO_POSITION) {
-//                    deleteConfirmationDialog(selectedPosition);
-//                } else {
-//                    Toast.makeText(requireContext(), "No account selected", Toast.LENGTH_SHORT).show();
-//                }
-//            });
-//        }
-//        catch (NullPointerException e){
-//            e.printStackTrace();
-//        }
-
         return rootView;
     }
 
@@ -164,17 +148,15 @@ public class AccountsFragment extends Fragment {
         spinner.setAdapter(adapter);
 
         builder.setPositiveButton("Confirm", (dialog, which) -> {
-            // Retrieve data from the dialog
+
             String name = nameEditText.getText().toString();
             double balance = Double.parseDouble(balanceEditText.getText().toString());
             String type = (String) spinner.getSelectedItem();
 
-            // Add the new account to your data source
             Account newAccount = new Account(null,name, balance, type);
             mockAccounts.add(newAccount);
 
             addAccount(newAccount);
-            // Notify the adapter about the data change
             adapter.notifyDataSetChanged();
         });
 

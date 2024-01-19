@@ -26,6 +26,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -52,6 +53,8 @@ public class TransactionsFragment extends Fragment {
 
     private AutoCompleteTextView autoCompleteCategory;
     private AutoCompleteTextView autoCompleteAccounts;
+    private TextInputEditText editTextAmount;
+    private TextInputEditText editTextMemo;
 
     @Override
     public View onCreateView(
@@ -66,9 +69,8 @@ public class TransactionsFragment extends Fragment {
 
         transactions = new ArrayList<>();
 
-        // Initialize your adapters (assuming you have lists of categories and accounts)
         String[] categories = {"Groceries", "Entertainment", "Transportation", "Travel Expenses", "Utilities", "Other", "Going out"};
-        List<String> accounts = new ArrayList<>(); // Implement this method
+        List<String> accounts = new ArrayList<>();
 
         categoryAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, categories);
         accountAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, accounts);
@@ -77,6 +79,9 @@ public class TransactionsFragment extends Fragment {
         autoCompleteCategory.setAdapter(categoryAdapter);
 
         autoCompleteAccounts = rootView.findViewById(R.id.filled_exposed_dropdown2);
+
+        editTextAmount = rootView.findViewById(R.id.editTextAmount);
+        editTextMemo = rootView.findViewById(R.id.editTextMemo);
 
 
         getAccountsFromFragment();
@@ -91,7 +96,6 @@ public class TransactionsFragment extends Fragment {
                 ((EditText) rootView.findViewById(R.id.editTextMemo)).getText().toString(),
                 radioButton.isChecked()
                 ));
-        // Rest of your code for handling button click, adding transactions, etc.
 
         return rootView;
     }
@@ -240,6 +244,9 @@ public class TransactionsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        editTextAmount.setText("");
+        editTextMemo.setText("");
 
         autoCompleteCategory.setText("");
         autoCompleteAccounts.setText("");

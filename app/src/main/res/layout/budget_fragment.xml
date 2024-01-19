@@ -35,6 +35,7 @@
 
     </androidx.appcompat.widget.Toolbar>
 
+
     <androidx.appcompat.widget.SearchView
         android:id="@+id/searchViewBudget"
         android:layout_width="0dp"
