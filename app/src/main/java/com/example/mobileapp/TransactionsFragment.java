@@ -21,8 +21,10 @@ import androidx.fragment.app.Fragment;
 
 import com.example.mobileapp.models.Account;
 import com.example.mobileapp.models.Transaction;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,6 +35,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -96,17 +99,34 @@ public class TransactionsFragment extends Fragment {
     private void addAmount(String id, double amount,String account) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        DocumentReference documentReference = db.collection("accounts").document(id);
-        documentReference.get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    try {
-                        final double currentAmount = documentSnapshot.getDouble("amount");
-                        documentReference.update("amount", currentAmount + amount);
-                    }
-                    catch (NullPointerException e){
-                        Toast.makeText(getActivity(), e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
+        CollectionReference collection = db.collection("accounts");
+        List<DocumentSnapshot> documentSnapshots = new ArrayList<>();
+        collection.whereEqualTo("name",account)
+                        .get()
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        if(task.isSuccessful())
+                                        {
+                                            QuerySnapshot documentSnapshot = task.getResult();
+                                            documentSnapshots.addAll(documentSnapshot.getDocuments());
+                                        }
+                                    }
+                                });
+        for(DocumentSnapshot x:documentSnapshots){
+            DocumentReference documentReference = collection.document(x.getId());
+            documentReference.get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        try {
+                            final double currentAmount = documentSnapshot.getDouble("amount");
+                            documentReference.update("amount", currentAmount + amount);
+                        }
+                        catch (NullPointerException e){
+                            Toast.makeText(getActivity(), e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
+
 
     }
 
@@ -187,6 +207,7 @@ public class TransactionsFragment extends Fragment {
 
 
         CollectionReference bankAccountsCollection = FirebaseFirestore.getInstance().collection("bankAccounts");
+
         Query userAccountsQuery;
         if (currentUserUid != null) {
             userAccountsQuery = bankAccountsCollection.whereEqualTo("user_id", currentUserUid).orderBy("balance");
