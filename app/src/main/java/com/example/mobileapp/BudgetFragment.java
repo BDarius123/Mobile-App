@@ -43,6 +43,7 @@ public class BudgetFragment extends Fragment {
 
     private BudgetAdapter adapter;
 
+    private List<Transaction> manualTransactions = new ArrayList<>();
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
@@ -63,12 +64,12 @@ public class BudgetFragment extends Fragment {
 
             recyclerView.setHasFixedSize(true);
 
-            List<Transaction> manualTransactions = new ArrayList<>();
-//            manualTransactions.add(new Transaction("Groceries", "Account 1", "2020-12-02", 50.0, "Buy groceries"));
-//            manualTransactions.add(new Transaction("Groceries", "Account 2", "2020-05-22", 25.0, "Movie night"));
-//            manualTransactions.add(new Transaction("Transportation", "Account 3","2020-06-013", 30.0, "Gas for car"));
+
+//            manualTransactions.add(new Transaction("1","Groceries", "Account 1", "2020-12-02","Buy groceries",50.0));
+//            manualTransactions.add(new Transaction("2","Groceries", "Account 2", "2020-05-22","Movie night",25.0));
+//            manualTransactions.add(new Transaction("3","Transportation", "Account 3","2020-06-013" , "Gas for car",30.0));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                manualTransactions = getTransactions();
+                getTransactions();
             }
 
             adapter = new BudgetAdapter(manualTransactions);
@@ -120,6 +121,7 @@ public class BudgetFragment extends Fragment {
                                 )
                         );
                         adapter.notifyDataSetChanged();
+                        manualTransactions = budgetList;
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

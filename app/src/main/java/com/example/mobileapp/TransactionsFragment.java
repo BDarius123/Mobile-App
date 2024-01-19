@@ -100,38 +100,44 @@ public class TransactionsFragment extends Fragment {
         return rootView;
     }
 
-    private void addAmount(String id, double amount,String account) {
+    private void addAmount( double amount,String account) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         CollectionReference collection = db.collection("accounts");
-        List<DocumentSnapshot> documentSnapshots = new ArrayList<>();
-        collection.whereEqualTo("name",account)
-                        .get()
-                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                        if(task.isSuccessful())
-                                        {
-                                            QuerySnapshot documentSnapshot = task.getResult();
-                                            documentSnapshots.addAll(documentSnapshot.getDocuments());
-                                        }
-                                    }
-                                });
-        for(DocumentSnapshot x:documentSnapshots){
-            DocumentReference documentReference = collection.document(x.getId());
-            documentReference.get()
-                    .addOnSuccessListener(documentSnapshot -> {
-                        try {
-                            final double currentAmount = documentSnapshot.getDouble("amount");
-                            documentReference.update("amount", currentAmount + amount);
-                        }
-                        catch (NullPointerException e){
-                            Toast.makeText(getActivity(), e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                        }
+
+
+        Query x = collection.whereEqualTo("name",account);
+
+
+        x.get()
+                .addOnSuccessListener(querySnapshots -> {
+
+                    List<DocumentSnapshot> documentSnapshots = querySnapshots.getDocuments();
+                    Toast.makeText(getActivity(), documentSnapshots.size(), Toast.LENGTH_SHORT).show();
+                    documentSnapshots.forEach((doc)->{
+
+                        DocumentReference documentReference = doc.getReference();
+                        documentReference.update("amount", amount);
+
+                        //Toast.makeText(getActivity(), doc.getId(), Toast.LENGTH_SHORT).show();
+//                        documentReference.get()
+//                                .addOnSuccessListener(documentSnapshot -> {
+//                                    try {
+//                                        final double currentAmount = documentSnapshot.getDouble("amount");
+//                                        documentReference.update("amount", currentAmount + amount);
+//                                        //Toast.makeText(getActivity(), documentReference.getId(), Toast.LENGTH_SHORT).show();
+//                                    }
+//                                    catch (NullPointerException e){
+//                                        Toast.makeText(getActivity(), e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+//                                    }
+//                                }).addOnFailureListener(new OnFailureListener() {
+//                                    @Override
+//                                    public void onFailure(@NonNull Exception e) {
+//                                        Toast.makeText(getActivity(), "couldn't change amount", Toast.LENGTH_SHORT).show();
+//                                    }
+//                                });
                     });
-        }
-
-
+                });
     }
 
     private void addTransaction(String categorie, double amount, String account, String memo, boolean flow) {
@@ -153,13 +159,20 @@ public class TransactionsFragment extends Fragment {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 trans.put("date", LocalDate.now().toString());
             }
-            String id = String.valueOf(db.collection("transactions")
+           db.collection("transactions")
                     .add(trans)
                     .addOnSuccessListener(new OnSuccessListener() {
                         @Override
                         public void onSuccess(Object o) {
-                            Toast.makeText(getActivity(), "Transaction added", Toast.LENGTH_SHORT).show();
 
+                            if(flow) {
+                                addAmount(amount, account);
+                                Toast.makeText(getActivity(), "Transaction added1", Toast.LENGTH_SHORT).show();
+                            }
+                            else {
+                                addAmount(-amount, account);
+                                Toast.makeText(getActivity(), "Transaction added2", Toast.LENGTH_SHORT).show();
+                            }
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -167,11 +180,8 @@ public class TransactionsFragment extends Fragment {
                         public void onFailure(@NonNull Exception e) {
                             Toast.makeText(getActivity(), "Transaction add failed", Toast.LENGTH_SHORT).show();
                         }
-                    }));
-            if(flow)
-                addAmount(id,amount,account);
-            else
-                addAmount(id,-amount,account);
+                    });
+
         }
     }
 
