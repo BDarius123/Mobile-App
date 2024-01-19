@@ -101,7 +101,7 @@ public class TransactionsFragment extends Fragment {
                 .addOnSuccessListener(documentSnapshot -> {
                     try {
                         final double currentAmount = documentSnapshot.getDouble("amount");
-                        documentReference.update("amount", currentAmount + Double.parseDouble(account));
+                        documentReference.update("amount", currentAmount + amount);
                     }
                     catch (NullPointerException e){
                         Toast.makeText(getActivity(), e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
@@ -112,7 +112,6 @@ public class TransactionsFragment extends Fragment {
 
     private void addTransaction(String categorie, double amount, String account, String memo, boolean flow) {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        List<Transaction> budgetList = new ArrayList<>();
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -169,10 +168,6 @@ public class TransactionsFragment extends Fragment {
                 Toast.makeText(getActivity(), "Couldn't load accounts", Toast.LENGTH_SHORT).show();
             }
         });
-        List<String> names = new ArrayList<>();
-        //names = accounts.stream().map(Account::getName).collect(Collectors.toList());
-
-        //return names;
     }
 
     private interface OnAccountsLoadedListener {
