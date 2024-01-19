@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -27,6 +28,8 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -74,22 +77,40 @@ public class TransactionsFragment extends Fragment {
 
 
         getAccountsFromFragment();
+        RadioButton radioButton = rootView.findViewById((R.id.radioInflow));
+
 
         MaterialButton add = rootView.findViewById(R.id.btnAddTransaction);
         add.setOnClickListener(view -> addTransaction(
                 autoCompleteCategory.getText().toString(),
                 Double.parseDouble(((EditText) rootView.findViewById(R.id.editTextAmount)).getText().toString()),
                 autoCompleteAccounts.getText().toString(),
-                ((EditText) rootView.findViewById(R.id.editTextMemo)).getText().toString()
-        ));
+                ((EditText) rootView.findViewById(R.id.editTextMemo)).getText().toString(),
+                radioButton.isChecked()
+                ));
         // Rest of your code for handling button click, adding transactions, etc.
 
         return rootView;
     }
 
+    private void addAmount(String id, double amount,String account) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+        DocumentReference documentReference = db.collection("accounts").document(id);
+        documentReference.get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    try {
+                        final double currentAmount = documentSnapshot.getDouble("amount");
+                        documentReference.update("amount", currentAmount + Double.parseDouble(account));
+                    }
+                    catch (NullPointerException e){
+                        Toast.makeText(getActivity(), e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
 
-    private void addTransaction(String categorie, double amount, String account, String memo) {
+    }
+
+    private void addTransaction(String categorie, double amount, String account, String memo, boolean flow) {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         List<Transaction> budgetList = new ArrayList<>();
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
@@ -99,32 +120,38 @@ public class TransactionsFragment extends Fragment {
         String currentUserUid = null;
         if (firebaseUser != null)
             currentUserUid = firebaseUser.getUid();
-        Map<String,Object> trans = new HashMap<>();
-        if(currentUserUid!=null){
-            trans.put("id",currentUserUid);
-            trans.put("amount",amount);
-            trans.put("categorie",categorie);
-            trans.put("memo",memo);
-            trans.put("account",account);
+        Map<String, Object> trans = new HashMap<>();
+        if (currentUserUid != null) {
+            trans.put("id", currentUserUid);
+            trans.put("amount", amount);
+            trans.put("categorie", categorie);
+            trans.put("memo", memo);
+            trans.put("account", account);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 trans.put("date", LocalDate.now().toString());
             }
-        }
-        db.collection("transactions")
-                .add(trans)
-                .addOnSuccessListener(new OnSuccessListener() {
-                    @Override
-                    public void onSuccess(Object o) {
-                        Toast.makeText(getActivity(), "Transaction added", Toast.LENGTH_SHORT).show();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getActivity(), "Transaction add failed", Toast.LENGTH_SHORT).show();
-                    }
-                });
+            String id = String.valueOf(db.collection("transactions")
+                    .add(trans)
+                    .addOnSuccessListener(new OnSuccessListener() {
+                        @Override
+                        public void onSuccess(Object o) {
+                            Toast.makeText(getActivity(), "Transaction added", Toast.LENGTH_SHORT).show();
 
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getActivity(), "Transaction add failed", Toast.LENGTH_SHORT).show();
+                        }
+                    }));
+            if(flow)
+                addAmount(id,amount,account);
+            else
+                addAmount(id,-amount,account);
+        }
     }
+
     private void getAccountsFromFragment() {
 
         getAccounts(new OnAccountsLoadedListener() {
